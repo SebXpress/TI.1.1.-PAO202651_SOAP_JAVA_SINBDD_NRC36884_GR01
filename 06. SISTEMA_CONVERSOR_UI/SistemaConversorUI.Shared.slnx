@@ -1,0 +1,8 @@
+<Solution>
+  <Project Path="SistemaConversorUI.Maui/SistemaConversorUI.Maui.csproj" Id="6ed1df9c-80bb-477f-9375-295212509bfd">
+    <Deploy Solution="Debug|*" />
+  </Project>
+  <Project Path="SistemaConversorUI.Shared/SistemaConversorUI.Shared.csproj" />
+  <Project Path="SistemaConversorUI.Web/SistemaConversorUI.Web.Client/SistemaConversorUI.Web.Client.csproj" Id="fc2bbfc9-b707-4c07-8f27-21b485ac718d" />
+  <Project Path="SistemaConversorUI.Web/SistemaConversorUI.Web/SistemaConversorUI.Web.csproj" Id="40e0649d-246b-4c5f-907f-116976b04d6b" />
+</Solution>
