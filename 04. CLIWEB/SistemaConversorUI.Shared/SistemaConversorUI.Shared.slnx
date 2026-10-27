@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="../../04. CLIMOVIL/SistemaConversorUI.Maui/SistemaConversorUI.Maui/SistemaConversorUI.Maui.csproj" />
+  <Project Path="../SistemaConversorUI.Web.Client/SistemaConversorUI.Web.Client/SistemaConversorUI.Web.Client.csproj" />
+  <Project Path="../SistemaConversorUI.Web/SistemaConversorUI.Web/SistemaConversorUI.Web.csproj" />
+  <Project Path="SistemaConversorUI.Shared/SistemaConversorUI.Shared.csproj" />
+</Solution>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>Sistema Conversor UI</title>
+    <base href="/" />
+    <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="app.css" />
+    <link rel="stylesheet" href="SistemaConversorUI.Maui.styles.css" />
+    <link rel="icon" href="data:,">
+</head>
+
+<body style="margin: 0; padding: 0;">
+    <div class="status-bar-safe-area"></div>
+
+    <div id="app">Cargando aplicación...</div>
+
+    <div id="blazor-error-ui" data-nosnippet>
+        Ocurrió un error no controlado.
+        <a href="" class="reload">Recargar</a>
+        <span class="dismiss">🗙</span>
+    </div>
+
+    <!-- Script para capturar errores de JavaScript y visualizarlos en pantalla en móvil -->
+    <div id="js-debug-error" style="display:none; position:fixed; bottom:0; left:0; width:100%; background:#ffebee; color:#c62828; padding:10px; font-size:12px; z-index:99999; border-top:2px solid #ef5350;"></div>
+    <script>
+        window.addEventListener('error', function(event) {
+            var box = document.getElementById('js-debug-error');
+            if (box) {
+                box.style.display = 'block';
+                box.innerText = 'Error JS: ' + (event.message || event.error) + ' en ' + (event.filename || '') + ':' + (event.lineno || '');
+            }
+        });
+    </script>
+
+    <!-- En MAUI Blazor Hybrid, autostart="false" es MANDATORIO para que el handler nativo coordine el inicio -->
+    <script src="_framework/blazor.webview.js" autostart="false"></script>
+</body>
+</html>

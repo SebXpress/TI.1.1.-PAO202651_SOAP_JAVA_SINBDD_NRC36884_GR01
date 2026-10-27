@@ -1,0 +1,90 @@
+﻿@page "/cambiar-contrasenia"
+@inject ec.edu.monster.Servicios.EstadoAplicacion EstadoApp
+@inject ec.edu.monster.Servicios.FabricaEstrategiaBackend Fabrica
+@inject NavigationManager NavManager
+
+<div class="app-layout">
+<div class="container py-5" style="max-width: 450px;">
+    <div class="card shadow p-4">
+        <h4 class="text-center mb-3 text-primary">Cambiar Contraseña</h4>
+
+        <div class="mb-3">
+            <label class="form-label">Contraseña Actual</label>
+            <input type="password" class="form-control" @bind="actual" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Nueva Contraseña</label>
+            <input type="password" class="form-control" @bind="nueva" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Confirmar Nueva Contraseña</label>
+            <input type="password" class="form-control" @bind="confirmacion" />
+        </div>
+
+        <div class="row g-2">
+            <div class="col"><button class="btn btn-secondary w-100" @onclick="Volver">Cancelar</button></div>
+            <div class="col"><button class="btn btn-success w-100" @onclick="EjecutarCambio">Guardar</button></div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(mensajeFeedback))
+        {
+            <div class="alert @claseAlerta mt-3 text-center">@mensajeFeedback</div>
+        }
+    </div>
+</div>
+
+</div>
+
+<style>
+    .app-layout {
+        min-height: 100vh;
+        width: 100%;
+        background: linear-gradient(135deg, #103553, #1979a9);
+        font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+</style>
+
+
+@code {
+    private string actual = "";
+    private string nueva = "";
+    private string confirmacion = "";
+    private string mensajeFeedback = "";
+    private string claseAlerta = "alert-danger";
+
+    private async Task EjecutarCambio()
+    {
+        mensajeFeedback = "";
+        if (string.IsNullOrWhiteSpace(actual) || string.IsNullOrWhiteSpace(nueva))
+        {
+            MostrarError("Todos los campos son obligatorios.");
+            return;
+        }
+        if (nueva != confirmacion)
+        {
+            MostrarError("Las contraseñas nuevas no coinciden.");
+            return;
+        }
+
+        try
+        {
+            var adaptador = Fabrica.ObtenerAdaptadorAutenticacion(EstadoApp.BackendActual);
+            string respuesta = await adaptador.CambiarContraseniaAsync(actual, nueva, EstadoApp.TokenActual);
+            claseAlerta = "alert-success";
+            mensajeFeedback = respuesta;
+            actual = nueva = confirmacion = "";
+        }
+        catch (Exception ex)
+        {
+            MostrarError(ex.Message);
+        }
+    }
+
+    private void MostrarError(string msj)
+    {
+        claseAlerta = "alert-danger";
+        mensajeFeedback = msj;
+    }
+
+    private void Volver() => NavManager.NavigateTo("/conversor");
+}

@@ -1,0 +1,43 @@
+@startuml
+title "DS_07_CAMBIAR_CONTRASENIA"
+autonumber
+
+actor "APLICACION" as Aplicacion
+participant "CONVERSION_VISTA" as ConversionVista
+participant "LOGIN_CONTROLADOR" as LoginControlador
+participant "CLIENTE_SOAP_CONVERSOR" as ClienteSoap
+participant "WSCONVERSORUNIDADES (CONTRATO SOAP)" as Contrato
+participant "MANEJADOR_AUTENTICACION" as ManejadorAutenticacion
+
+Aplicacion -> ConversionVista: Solicita cambiar contrasenia
+ConversionVista -> LoginControlador: cambiarContrasenia(actual, nueva)
+LoginControlador -> LoginControlador: valida campos no vacios
+
+LoginControlador -> ClienteSoap: cambiarContrasenia(actual, nueva)
+ClienteSoap -> ClienteSoap: agrega token en header SOAP
+ClienteSoap -> Contrato: cambiarContrasenia(actual, nueva)
+
+Contrato -> ManejadorAutenticacion: valida token del header SOAP
+alt token invalido o ausente
+    ManejadorAutenticacion --> ClienteSoap: RuntimeException("Acceso denegado")
+    ClienteSoap --> LoginControlador: error de autenticacion
+    LoginControlador --> ConversionVista: mostrar error y pedir nuevo login
+else token valido
+    ManejadorAutenticacion --> Contrato: solicitud autorizada
+    Contrato -> Contrato: validar contrasenia actual y nueva
+    Contrato --> ClienteSoap: "Contrasenia actualizada correctamente"
+    ClienteSoap --> LoginControlador: confirmacion
+    LoginControlador --> ConversionVista: mostrar exito
+end
+
+note right of Contrato
+El servicio real en 04.SERVIDOR expone:
+- login
+- cambiarContrasenia
+- convertirLongitud
+- convertirMasa
+- convertirTemperatura
+end note
+
+@enduml
+

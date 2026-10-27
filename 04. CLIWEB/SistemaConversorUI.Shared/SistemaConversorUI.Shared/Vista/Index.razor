@@ -1,0 +1,252 @@
+﻿@namespace SistemaConversorUI.Shared.Vista
+@page "/"
+
+@using ec.edu.monster.Servicios
+@using ec.edu.monster.Modelos
+
+@inject EstadoAplicacion EstadoApp
+@inject FabricaEstrategiaBackend Fabrica
+@inject NavigationManager NavManager
+
+<div class="login-container">
+    <div class="login-card">
+        <div class="login-visual">
+            <img class="brand-image" src="/imagen-front.jpg" alt="Imagen principal del sistema Monster Converter" />
+        </div>
+
+        <div class="login-form-content">
+            <div class="brand-header">
+                <div class="brand-icon">↔</div>
+                <h1>MONSTER <span>CONVERTER</span></h1>
+                <p>Sistema de Conversión de Unidades</p>
+            </div>
+
+            <EditForm Model="this" OnValidSubmit="HacerLogin">
+                <div class="form-group">
+                    <label>ENTORNO DE CONEXIÓN</label>
+                    <select class="form-control" @bind="EstadoApp.BackendActual">
+                        @foreach (var backend in Enum.GetValues<TipoBackend>())
+                        {
+                            <option value="@backend">@backend</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Usuario</label>
+                    <input type="text" class="form-control" placeholder="Ingresa tu usuario" @bind="usuario" required />
+                </div>
+
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <input type="password" class="form-control" placeholder="Ingresa tu contraseña" @bind="contrasenia" required />
+                </div>
+
+                <button type="submit" class="btn-submit" disabled="@cargando">
+                    @if (cargando)
+                    {
+                        <span class="spinner-border spinner-border-sm"></span>
+                        <span>Verificando...</span>
+                    }
+                    else
+                    {
+                        <span>Iniciar sesión →</span>
+                    }
+                </button>
+            </EditForm>
+
+            @if (!string.IsNullOrWhiteSpace(mensajeErrorLogin))
+            {
+                <div class="alert error">@mensajeErrorLogin</div>
+            }
+
+            <div class="footer-note">GRUPO #1 • PLATAFORMA DE CONVERSIÓN</div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .login-container {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background: linear-gradient(135deg, #103553, #1979a9);
+        font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+
+    .login-card {
+        width: 100%;
+        max-width: 900px;
+        display: grid;
+        grid-template-columns: minmax(280px, 1fr) minmax(360px, 1fr);
+        background: #ffffff;
+        border-radius: 18px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        overflow: hidden;
+    }
+
+    .login-visual {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 28px;
+        background: #eef6fb;
+    }
+
+    .brand-header {
+        text-align: center;
+        margin-bottom: 25px;
+    }
+
+    .brand-image {
+        display: block;
+        width: 100%;
+        max-height: 420px;
+        object-fit: contain;
+        border-radius: 12px;
+        margin: 0 auto;
+    }
+
+    .login-form-content {
+        padding: 35px 30px;
+    }
+
+    .brand-icon {
+        font-size: 32px;
+        margin-bottom: 5px;
+    }
+
+    .brand-header h1 {
+        font-size: 20px;
+        margin: 0;
+        color: #103553;
+        letter-spacing: 1px;
+    }
+
+    .brand-header span { color: #1979a9; }
+    .brand-header p { font-size: 13px; color: #66788a; margin-top: 4px; }
+
+    .form-group {
+        margin-bottom: 18px;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 11px;
+        font-weight: 700;
+        color: #344c63;
+        margin-bottom: 6px;
+        letter-spacing: 0.5px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 11px 14px;
+        border: 1px solid #dce4ed;
+        border-radius: 8px;
+        font-size: 14px;
+        box-sizing: border-box;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #1979a9;
+        box-shadow: 0 0 0 3px rgba(25, 121, 169, 0.15);
+    }
+
+    .btn-submit {
+        width: 100%;
+        padding: 12px;
+        background: #155b87;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background 0.2s;
+        margin-top: 10px;
+    }
+
+    .btn-submit:hover:not(:disabled) { background: #103553; }
+    .btn-submit:disabled { opacity: 0.7; cursor: wait; }
+
+    .alert.error {
+        margin-top: 15px;
+        padding: 10px;
+        background: #fff2f2;
+        border: 1px solid #f2caca;
+        color: #a52a2a;
+        border-radius: 6px;
+        font-size: 12px;
+        text-align: center;
+    }
+
+    .footer-note {
+        text-align: center;
+        margin-top: 25px;
+        font-size: 10px;
+        color: #8b9aab;
+        font-weight: 700;
+        letter-spacing: 1px;
+    }
+
+    @@media (max-width: 700px) {
+        .login-card {
+            grid-template-columns: 1fr;
+            max-width: 420px;
+        }
+
+        .login-visual {
+            padding: 20px 25px 8px;
+        }
+
+        .brand-image {
+            max-height: 180px;
+        }
+
+        .login-form-content {
+            padding: 25px 30px 30px;
+        }
+    }
+</style>
+
+@code {
+    private string usuario = "MONSTER";
+    private string contrasenia = "MONSTER69";
+    private string mensajeErrorLogin = "";
+    private bool cargando;
+
+    private async Task HacerLogin()
+    {
+        if (cargando) return;
+
+        mensajeErrorLogin = string.Empty;
+        cargando = true;
+
+        try
+        {
+            var adaptadorAuth = Fabrica.ObtenerAdaptadorAutenticacion(EstadoApp.BackendActual);
+            EstadoApp.TokenActual = await adaptadorAuth.IniciarSesionAsync(usuario, contrasenia);
+
+            if (!string.IsNullOrEmpty(EstadoApp.TokenActual))
+            {
+                NavManager.NavigateTo("/conversor");
+            }
+            else
+            {
+                mensajeErrorLogin = "Credenciales inválidas o token no recibido.";
+            }
+        }
+        catch
+        {
+            mensajeErrorLogin = "Error al conectar. Verifica el servidor y tus credenciales.";
+        }
+        finally
+        {
+            cargando = false;
+        }
+    }
+}

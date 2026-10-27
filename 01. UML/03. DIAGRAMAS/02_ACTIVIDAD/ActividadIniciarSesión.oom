@@ -2552,8 +2552,8 @@ DISPNAME 0 Microsoft Sans Serif,8,N</a:FontList>
 <o:FlowSymbol Id="o93">
 <a:CreationDate>1778561125</a:CreationDate>
 <a:ModificationDate>1778561125</a:ModificationDate>
-<a:Rect>((5114,-47392), (6368,-42823))</a:Rect>
-<a:ListOfPoints>((5731,-43223),(5746,-46992))</a:ListOfPoints>
+<a:Rect>((5120,-47392), (6371,-42823))</a:Rect>
+<a:ListOfPoints>((5742,-43223),(5746,-46992))</a:ListOfPoints>
 <a:CornerStyle>1</a:CornerStyle>
 <a:ArrowStyle>1</a:ArrowStyle>
 <a:LineColor>16744448</a:LineColor>
@@ -2573,8 +2573,8 @@ DESTINATION 0 Microsoft Sans Serif,8,N</a:FontList>
 <o:FlowSymbol Id="o96">
 <a:CreationDate>1778561123</a:CreationDate>
 <a:ModificationDate>1778561123</a:ModificationDate>
-<a:Rect>((25066,-43492), (26318,-37841))</a:Rect>
-<a:ListOfPoints>((25683,-38241),(25696,-43092))</a:ListOfPoints>
+<a:Rect>((25067,-43492), (26317,-37841))</a:Rect>
+<a:ListOfPoints>((25692,-38241),(25696,-43092))</a:ListOfPoints>
 <a:CornerStyle>1</a:CornerStyle>
 <a:ArrowStyle>1</a:ArrowStyle>
 <a:LineColor>16744448</a:LineColor>
