@@ -1,0 +1,12 @@
+﻿@using SistemaConversorUI.Web.Client.Layout
+@using SistemaConversorUI.Shared.Vista
+
+<Router AppAssembly="@typeof(Program).Assembly"
+        AdditionalAssemblies="new[] { typeof(SistemaConversorUI.Shared.Vista.Index).Assembly }">
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+    </Found>
+    <NotFound>
+        <p>Página no encontrada.</p>
+    </NotFound>
+</Router>

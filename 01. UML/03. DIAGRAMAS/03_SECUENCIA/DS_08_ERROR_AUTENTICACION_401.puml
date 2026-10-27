@@ -1,0 +1,36 @@
+@startuml
+title "DS_08_ERROR_AUTENTICACION_401"
+autonumber
+
+actor "APLICACION" as Aplicacion
+participant "CONVERSION_VISTA" as ConversionVista
+participant "CONVERSION_CONTROLADOR" as ConversionControlador
+participant "CLIENTE_SOAP_CONVERSOR" as ClienteSoap
+participant "MANEJADOR_AUTENTICACION" as ManejadorAutenticacion
+participant "WSCONVERSORUNIDADES" as WSConversorUnidades
+
+Aplicacion -> ConversionVista: Solicita conversion protegida
+ConversionVista -> ConversionControlador: solicitarConversion(...)
+ConversionControlador -> ClienteSoap: convertir...(token, ...)
+
+alt token ausente
+    ClienteSoap -> ManejadorAutenticacion: SOAP convertirLongitud(...)\nSin header SOAP token
+    ManejadorAutenticacion --> ClienteSoap: Fault "Acceso denegado: No se encontro el token"
+else token invalido
+    ClienteSoap -> ManejadorAutenticacion: SOAP convertirLongitud(...)\nSOAP Header token=token_invalido
+    ManejadorAutenticacion --> ClienteSoap: Fault "Acceso denegado: Token invalido o expirado"
+end
+
+ClienteSoap --> ConversionControlador: error de autenticacion
+ConversionControlador -> ConversionControlador: limpia token local
+ConversionControlador --> ConversionVista: mostrar error y redirigir a login
+ConversionVista --> Aplicacion: solicitar nuevo inicio de sesion
+
+note right of WSConversorUnidades
+La accion del controlador no se ejecuta cuando
+el ManejadorAutenticacion
+interrumpe la solicitud con RuntimeException.
+end note
+
+@enduml
+

@@ -1,0 +1,17 @@
+﻿@inherits LayoutComponentBase
+
+<main class="p-3">
+    <ErrorBoundary>
+        <ChildContent>
+            @Body
+        </ChildContent>
+        <ErrorContent Context="ex">
+            <div class="alert alert-danger shadow m-3">
+                <h5>Error en Android:</h5>
+                <p>@ex.Message</p>
+                <hr />
+                <pre style="font-size:0.75rem;">@ex.StackTrace</pre>
+            </div>
+        </ErrorContent>
+    </ErrorBoundary>
+</main>

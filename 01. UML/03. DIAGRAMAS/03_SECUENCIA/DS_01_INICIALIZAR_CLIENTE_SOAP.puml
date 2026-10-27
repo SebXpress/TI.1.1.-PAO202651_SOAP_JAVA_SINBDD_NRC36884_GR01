@@ -1,0 +1,41 @@
+@startuml
+title "DS_01_INICIALIZAR_CLIENTE_SOAP"
+
+participant "APLICACION\n(Main)" as Main
+participant "CLIENTE_SOAP_CONVERSOR" as ClienteSoap
+participant "WSCONVERSORUNIDADES_CLIENT" as ProxySoap
+participant "WSCONVERSORUNIDADES" as Servicio
+participant "ADMINISTRADOR_TOKENS" as Tokens
+
+Main -> ClienteSoap: 1. crear cliente SOAP
+activate ClienteSoap
+
+ClienteSoap -> ProxySoap: 2. inicializar endpoint binding SOAP (JAX-WS)
+activate ProxySoap
+
+ClienteSoap -> ProxySoap: 3. login(usuario, contrasenia)
+ProxySoap -> Servicio: 4. login(usuario, contrasenia)
+activate Servicio
+
+alt credenciales correctas
+	Servicio -> Tokens: 5. GenerarToken()
+	activate Tokens
+	Tokens --> Servicio: 6. token
+	deactivate Tokens
+
+	Servicio --> ProxySoap: 7. token
+	ProxySoap --> ClienteSoap: 8. token
+	ClienteSoap -> ClienteSoap: 9. guardar token para header SOAP "token"
+	ClienteSoap --> Main: 10. cliente inicializado y autenticado
+else credenciales incorrectas
+	Servicio --> ProxySoap: 7. RuntimeException("Credenciales incorrectas")
+	ProxySoap --> ClienteSoap: 8. error de autenticacion
+	ClienteSoap --> Main: 9. mostrar error de login
+end
+
+deactivate Servicio
+deactivate ProxySoap
+deactivate ClienteSoap
+
+@enduml
+
