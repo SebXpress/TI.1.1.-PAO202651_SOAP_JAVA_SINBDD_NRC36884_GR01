@@ -23,23 +23,32 @@ public class ClienteWSConversor {
     private static final QName QNOMBRE_SERVICIO = new QName(ESPACIO_NOMBRES, "WSConversorUnidades");
     private static final QName QNOMBRE_PUERTO = new QName(ESPACIO_NOMBRES, "WSConversorUnidadesPort");
 
-    private static final List<String> BASES_URL_POR_DEFECTO = List.of(
-            "http://localhost:8080/WS_ConUni_Java_SOAP_GR01",
-            "http://localhost:8080/WS_ConUni_Java_SOAP_GR01-1.0-SNAPSHOT",
-            "http://localhost:8080/04.SERVIDOR"
-    );
+    private final List<String> basesUrl;
 
     private final ContratoWSConversor puerto;
     private String tokenSesion;
     private String endpointActivo;
 
     public ClienteWSConversor() {
+        this(System.getProperty("soap.host", System.getenv().getOrDefault("SOAP_HOST", "localhost")),
+             Integer.parseInt(System.getProperty("soap.port", System.getenv().getOrDefault("SOAP_PORT", "8080"))),
+             System.getProperty("soap.contexto", System.getenv().getOrDefault("SOAP_CONTEXTO", "WS_ConUni_Java_SOAP_GR01")));
+    }
+
+    public ClienteWSConversor(String host, int puerto, String contexto) {
+        host = host.trim();
+        contexto = contexto.trim();
+        if (!host.matches("[a-zA-Z0-9.-]+") || puerto < 1 || puerto > 65535
+                || !contexto.matches("[a-zA-Z0-9_.-]+")) {
+            throw new IllegalArgumentException("IP/nombre, puerto o contexto no valido.");
+        }
+        this.basesUrl = List.of("http://" + host + ":" + puerto + "/" + contexto);
         this.puerto = inicializarPuerto();
     }
 
     private ContratoWSConversor inicializarPuerto() {
         List<String> wsdlsIntentados = new ArrayList<>();
-        for (String baseUrl : BASES_URL_POR_DEFECTO) {
+        for (String baseUrl : basesUrl) {
             String endpoint = baseUrl + "/WSConversorUnidades";
             List<String> wsdlsCandidatos = List.of(endpoint + "?WSDL", endpoint + "?wsdl");
             
@@ -50,6 +59,7 @@ public class ClienteWSConversor {
                     BindingProvider proveedor = (BindingProvider) puertoTemporal;
                     proveedor.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpoint);
                     
+                    proveedor.getRequestContext().put(jakarta.xml.ws.handler.MessageContext.HTTP_REQUEST_HEADERS, java.util.Map.of("X-Cliente", List.of("CONSOLA")));
                     configurarManejadorToken(proveedor);
                     this.endpointActivo = endpoint;
                     return puertoTemporal;

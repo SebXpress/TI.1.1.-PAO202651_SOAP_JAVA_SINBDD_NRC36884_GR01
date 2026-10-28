@@ -1,3 +1,5 @@
+using System.Security;
+using ec.edu.monster.Servicios;
 ﻿using System.Text;
 using System.Xml.Linq;
 using ec.edu.monster.Interfaces;
@@ -9,10 +11,14 @@ public class AdaptadorAutenticacionJavaSoap : IAdaptadorAutenticacion
 {
     public TipoBackend Tipo => TipoBackend.JavaSoap;
     private readonly HttpClient _httpClient;
+    private readonly EstadoAplicacion _estado;
 
-    public AdaptadorAutenticacionJavaSoap(HttpClient httpClient)
+    public AdaptadorAutenticacionJavaSoap(HttpClient httpClient, EstadoAplicacion estado)
     {
         _httpClient = httpClient;
+        _estado = estado;
+        _httpClient.DefaultRequestHeaders.Remove("X-Cliente");
+        _httpClient.DefaultRequestHeaders.Add("X-Cliente", estado.Cliente);
     }
 
     public async Task<string> IniciarSesionAsync(string usuario, string contrasenia)
@@ -21,14 +27,14 @@ public class AdaptadorAutenticacionJavaSoap : IAdaptadorAutenticacion
                                <soapenv:Header/>
                                <soapenv:Body>
                                   <ws:login>
-                                     <usuario>{usuario}</usuario>
-                                     <contrasenia>{contrasenia}</contrasenia>
+                                     <usuario>{SecurityElement.Escape(usuario)}</usuario>
+                                     <contrasenia>{SecurityElement.Escape(contrasenia)}</contrasenia>
                                   </ws:login>
                                </soapenv:Body>
                             </soapenv:Envelope>";
 
         var content = new StringContent(soapXml, Encoding.UTF8, "text/xml");
-        var response = await _httpClient.PostAsync(ConstantesRed.UrlJavaSoap, content);
+        var response = await _httpClient.PostAsync(_estado.UrlJavaSoap, content);
 
         if (!response.IsSuccessStatusCode)
             throw new Exception($"Error HTTP: {response.StatusCode}");
@@ -46,16 +52,16 @@ public class AdaptadorAutenticacionJavaSoap : IAdaptadorAutenticacion
     public async Task<string> CambiarContraseniaAsync(string contraseniaActual, string contraseniaNueva, string token)
     {
         string soapXml = $@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:ws=""http://ws.controladores.monster.edu.ec/"">
-                               <soapenv:Header/>
+                               <soapenv:Header><ws:token>{SecurityElement.Escape(token)}</ws:token></soapenv:Header>
                                <soapenv:Body>
                                   <ws:cambiarContrasenia>
-                                     <contraseniaActual>{contraseniaActual}</contraseniaActual>
-                                     <contraseniaNueva>{contraseniaNueva}</contraseniaNueva>
+                                     <contraseniaActual>{SecurityElement.Escape(contraseniaActual)}</contraseniaActual>
+                                     <contraseniaNueva>{SecurityElement.Escape(contraseniaNueva)}</contraseniaNueva>
                                   </ws:cambiarContrasenia>
                                </soapenv:Body>
                             </soapenv:Envelope>";
 
-        var request = new HttpRequestMessage(HttpMethod.Post, ConstantesRed.UrlJavaSoap)
+        var request = new HttpRequestMessage(HttpMethod.Post, _estado.UrlJavaSoap)
         {
             Content = new StringContent(soapXml, Encoding.UTF8, "text/xml")
         };

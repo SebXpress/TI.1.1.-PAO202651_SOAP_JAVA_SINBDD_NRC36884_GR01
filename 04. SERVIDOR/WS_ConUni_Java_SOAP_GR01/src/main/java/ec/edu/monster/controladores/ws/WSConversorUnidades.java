@@ -23,6 +23,18 @@ import jakarta.jws.WebService;
 @HandlerChain(file = "manejador.xml")
 public class WSConversorUnidades {
 
+    /** Estado público mínimo para verificar conectividad sin iniciar sesión. */
+    @WebMethod(operationName = "obtenerEstado")
+    public ec.edu.monster.servicios.MonitorServidor.Estado obtenerEstado() {
+        return ec.edu.monster.servicios.MonitorServidor.obtenerEstado();
+    }
+
+    @WebMethod(operationName = "cerrarSesion")
+    public String cerrarSesion(@WebParam(name = "token") String token) {
+        AdministradorTokens.InvalidarToken(token);
+        return "Sesion cerrada";
+    }
+
     private final ServicioConversor<UnidadLongitud> servicioLongitud = new ServicioConversor<>(new ConversorLongitud());
     private final ServicioConversor<UnidadMasa> servicioMasa = new ServicioConversor<>(new ConversorMasa());
     private final ServicioConversor<UnidadTemperatura> servicioTemperatura = new ServicioConversor<>(new ConversorTemperatura());

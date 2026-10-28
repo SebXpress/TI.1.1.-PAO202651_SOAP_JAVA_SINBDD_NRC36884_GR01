@@ -25,14 +25,11 @@ public class LoginVista {
         
         try {
             loginC = new LoginControlador();
-            mensajes.mostrarMensaje("Servidor SOAP encontrado en: " + loginC.getEndpointActivo());
-            
         } catch (Exception ex) {
-            mensajes.mostrarError("No se pudo conectar al servidor SOAP:  " + ex.getMessage());
-            return ;
+            mensajes.mostrarError("No se pudo conectar al servidor SOAP. Revisa SOAP_HOST, SOAP_PORT y SOAP_CONTEXTO. " + ex.getMessage());
+            return;
         }
-        
-        
+
         boolean autenticado = false;
         
         while (!autenticado) {
@@ -43,7 +40,7 @@ public class LoginVista {
             String contrasenia = EntradaUtil.leerTextoNoVacio("Contrasenia:");
             
             String token = loginC.autenticar(new LoginModelo(usuario,contrasenia));
-            mensajes.mostrarMensaje("Login exitoso, Token obtenido: " + token);
+            mensajes.mostrarMensaje("Inicio de sesion exitoso.");
             
             autenticado = true; // Permite salir del bucle de login
             

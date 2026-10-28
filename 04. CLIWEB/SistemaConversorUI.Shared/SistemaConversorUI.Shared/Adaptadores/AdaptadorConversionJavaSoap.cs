@@ -1,3 +1,4 @@
+using ec.edu.monster.Servicios;
 ﻿using System.Globalization;
 using System.Text;
 using System.Xml.Linq;
@@ -10,10 +11,14 @@ public class AdaptadorConversionJavaSoap : IAdaptadorConversion
 {
     public TipoBackend Tipo => TipoBackend.JavaSoap;
     private readonly HttpClient _httpClient;
+    private readonly EstadoAplicacion _estado;
 
-    public AdaptadorConversionJavaSoap(HttpClient httpClient)
+    public AdaptadorConversionJavaSoap(HttpClient httpClient, EstadoAplicacion estado)
     {
         _httpClient = httpClient;
+        _estado = estado;
+        _httpClient.DefaultRequestHeaders.Remove("X-Cliente");
+        _httpClient.DefaultRequestHeaders.Add("X-Cliente", estado.Cliente);
     }
 
     public async Task<double> ConvertirAsync(PeticionConversion peticion, string token)
@@ -41,7 +46,7 @@ public class AdaptadorConversionJavaSoap : IAdaptadorConversion
                             </soapenv:Envelope>";
 
         var content = new StringContent(soapXml, Encoding.UTF8, "text/xml");
-        var response = await _httpClient.PostAsync(ConstantesRed.UrlJavaSoap, content);
+        var response = await _httpClient.PostAsync(_estado.UrlJavaSoap, content);
         string responseXml = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)

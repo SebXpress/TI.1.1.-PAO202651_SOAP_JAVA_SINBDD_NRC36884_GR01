@@ -11,8 +11,8 @@ package ec.edu.monster.seguridad;
 public class AdministradorCredenciales {
     
     // credenciales por defecto para almacenar sin usar BDD
-    private static String usuarioValido = "MONSTER";
-    private static String contraseniaValida = "MONSTER69";
+    private static String usuarioValido = "monster";
+    private static String contraseniaValida = "monster69";
 
     public static synchronized boolean validarCredenciales(String usuario,String contrasenia){
         if(usuario == null || contrasenia == null){

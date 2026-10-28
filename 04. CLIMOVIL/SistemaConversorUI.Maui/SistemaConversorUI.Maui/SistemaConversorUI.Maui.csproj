@@ -81,4 +81,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\04. CLIWEB\SistemaConversorUI.Shared\SistemaConversorUI.Shared\SistemaConversorUI.Shared.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="appsettings.json" LogicalName="SistemaConversorUI.Maui.appsettings.json" />
+  </ItemGroup>
 </Project>

@@ -26,6 +26,12 @@ public final class EntradaUtil {
         }
     }
 
+    public static String leerTextoConDefecto(String mensaje, String defecto) {
+        System.out.print(mensaje + " [" + defecto + "]: ");
+        String texto = ENTRADA.nextLine().trim();
+        return texto.isEmpty() ? defecto : texto;
+    }
+
     public static int leerEntero(String mensaje) {
         while (true) {
             System.out.print(mensaje);

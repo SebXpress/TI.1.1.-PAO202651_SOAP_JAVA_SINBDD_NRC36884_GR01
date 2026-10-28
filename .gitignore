@@ -15,3 +15,9 @@
 *.idsig
 *.war
 *.jar
+
+# Archivos locales de IDE y comprobaciones auxiliares
+**/.vs/
+**/__pycache__/
+*.pyc
+/04. SERVIDOR/verificar_soap.py

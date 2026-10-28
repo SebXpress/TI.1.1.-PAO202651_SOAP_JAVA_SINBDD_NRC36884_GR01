@@ -19,6 +19,10 @@ public class LoginControlador {
         this.clienteWs = new ClienteWSConversor();
     }
 
+    public LoginControlador(String host, int puerto, String contexto) {
+        this.clienteWs = new ClienteWSConversor(host, puerto, contexto);
+    }
+
     public String autenticar(LoginModelo loginModelo) {
         return clienteWs.login(loginModelo.getUsuario(), loginModelo.getContrasenia());
     }

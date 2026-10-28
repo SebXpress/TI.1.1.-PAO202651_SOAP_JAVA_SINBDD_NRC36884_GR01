@@ -1,5 +1,6 @@
 ﻿@namespace SistemaConversorUI.Shared.Vista
 @page "/"
+@page "/login"
 
 @using ec.edu.monster.Servicios
 @using ec.edu.monster.Modelos
@@ -22,16 +23,6 @@
             </div>
 
             <EditForm Model="this" OnValidSubmit="HacerLogin">
-                <div class="form-group">
-                    <label>ENTORNO DE CONEXIÓN</label>
-                    <select class="form-control" @bind="EstadoApp.BackendActual">
-                        @foreach (var backend in Enum.GetValues<TipoBackend>())
-                        {
-                            <option value="@backend">@backend</option>
-                        }
-                    </select>
-                </div>
-
                 <div class="form-group">
                     <label>Usuario</label>
                     <input type="text" class="form-control" placeholder="Ingresa tu usuario" @bind="usuario" required />
@@ -214,8 +205,8 @@
 </style>
 
 @code {
-    private string usuario = "MONSTER";
-    private string contrasenia = "MONSTER69";
+    private string usuario = "monster";
+    private string contrasenia = "monster69";
     private string mensajeErrorLogin = "";
     private bool cargando;
 
@@ -228,6 +219,7 @@
 
         try
         {
+            EstadoApp.BackendActual = TipoBackend.JavaSoap;
             var adaptadorAuth = Fabrica.ObtenerAdaptadorAutenticacion(EstadoApp.BackendActual);
             EstadoApp.TokenActual = await adaptadorAuth.IniciarSesionAsync(usuario, contrasenia);
 
@@ -240,9 +232,17 @@
                 mensajeErrorLogin = "Credenciales inválidas o token no recibido.";
             }
         }
+        catch (ArgumentException ex)
+        {
+            mensajeErrorLogin = ex.Message;
+        }
+        catch (HttpRequestException)
+        {
+            mensajeErrorLogin = $"No se pudo conectar a {EstadoApp.UrlJavaSoap}. Verifica la IP, el puerto, la red y las credenciales.";
+        }
         catch
         {
-            mensajeErrorLogin = "Error al conectar. Verifica el servidor y tus credenciales.";
+            mensajeErrorLogin = "No se pudo iniciar sesión. Verifica el servidor SOAP y tus credenciales.";
         }
         finally
         {
